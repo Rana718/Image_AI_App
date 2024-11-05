@@ -1,16 +1,15 @@
-import { Colors } from "@/constants/Colors"
-import { View, Text, useColorScheme } from "react-native"
-import Auth from "./auth";
+import { View } from "react-native"
+import { useUser } from "@clerk/clerk-expo";
+import { Redirect } from "expo-router";
 
 
 
 export default function Home() {
-    const colorScheme = useColorScheme();
-    const themeColors = colorScheme === "dark" ? Colors.dark : Colors.light;
+    const {user} = useUser();
 
     return (
         <View>
-            <Auth/>
+            {!user? <Redirect href={'/auth'}/>: <Redirect href={'/(tabs)'}/>}
         </View>
     )
 }

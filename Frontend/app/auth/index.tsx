@@ -1,10 +1,17 @@
-import { View, Text, Image, useColorScheme } from 'react-native';
-import React from 'react';
-import { Colors } from '@/constants/Colors';
+import { View, Image, Text, TouchableOpacity } from 'react-native';
+import React, { useEffect } from 'react';
+import { useNavigation, useRouter } from "expo-router";
+import ThemedText from '@/components/ui/ThemedText';
+import ThemedView from '@/components/ui/ThemedView';
 
 export default function Auth() {
-    const colorScheme = useColorScheme();
-    const themeColors = colorScheme === "dark" ? Colors.dark : Colors.light;
+    const router = useRouter();
+    const navigation = useNavigation();
+    useEffect(() => {
+        navigation.setOptions({
+            headerShown: false,
+        });
+    }, [navigation]);
 
     return (
         <View>
@@ -13,21 +20,22 @@ export default function Auth() {
                 className="w-full h-[600px]"
             />
 
-            <View 
-                className={`p-6 mt-[-20px] h-[600px] rounded-t-[30px]`}
-                style={{backgroundColor: themeColors.background}}
-            >
+            <ThemedView className={`p-6 mt-[-20px] h-[600px] rounded-t-[30px]`}>
             
-                <Text className="text-center text-2xl font-bold"
-                    style={{color: themeColors.text}}
-                >Welcome To AI World</Text>
+                <ThemedText className='text-center text-2xl font-bold'>
+                    Welcome To AI World
+                </ThemedText>
 
-                <Text className='pt-4 text-center text-lg'
-                    style={{color: themeColors.text}}
-                >
-                    this is Ai World, where you can find the best AI tools and services.
-                </Text>
-            </View>
+                <ThemedText className="pt-4 text-center text-lg" colorKey="lightText">
+                    This is AI World, where you can find the best AI tools and services.
+                </ThemedText>
+
+                <TouchableOpacity className='flex items-center justify-center' onPress={()=> router.push('/auth/login')}>
+                    <View className='w-[80%] p-5 rounded-full mt-5 bg-tint'>
+                        <Text className='text-center text-white font-bold text-xl'>Continue</Text>
+                    </View>
+                </TouchableOpacity>
+            </ThemedView>
         </View>
     );
 }
