@@ -20,3 +20,17 @@ model UserList{
   userEmail String @unique
   credits Int
 }
+
+
+model aiModelList{
+  id Int @id @default(autoincrement())
+  name String
+  aiModelName String
+  defaultPrompt String?
+  isFeatured Boolean
+  userImageUpload Boolean
+  style Boolean
+  avater Boolean
+  icon String?
+  banner String?
+}

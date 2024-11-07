@@ -1,9 +1,10 @@
 import { Hono } from 'hono'
 import userRoutes from './routes/userRoutes'
 import { cors } from 'hono/cors';
+import modelAddRoute from './routes/ModelAdd'
 
 const app = new Hono()
-const routes = [userRoutes]
+const routes = [userRoutes, modelAddRoute]
 
 app.use('*', cors({
   origin: '*',
