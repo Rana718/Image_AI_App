@@ -1,21 +1,40 @@
-import { View, Text, ScrollView } from 'react-native'
+import { View, Text, ScrollView, FlatList } from 'react-native'
 import React from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ThemedScrollView from '@/components/ui/ThemedScrollView';
 import Header from '@/components/Header';
 import Banner from '@/components/Banner';
 import FeaturedModel from '@/components/FeaturedModel';
+import ThemedView from '@/components/ui/ThemedView';
+import ThemedText from '@/components/ui/ThemedText';
+import AiModel from '@/components/AiModel';
+import { AvatarModel, StylingModel } from '@/constants/ModelInfo';
 
 export default function index() {
     const { top: safeTop } = useSafeAreaInsets();
 
     return (
-        <ThemedScrollView className='px-5' style={{ paddingTop: safeTop}}>
-            <Header/>
+        <ThemedView className='px-5 flex-1' style={{ paddingTop: safeTop }}>
+            <FlatList
+                data={[1]}
+                nestedScrollEnabled
+                renderItem={({ item }) => (
+                    <View>
+                        <Header />
 
-            <Banner/>
+                        <Banner />
 
-            <FeaturedModel/>
-        </ThemedScrollView>
+                        <FeaturedModel />
+
+                        <ThemedText className='text-2xl mt-4 font-light'>AVATAR</ThemedText>
+                        <AiModel data={AvatarModel}/>
+
+                        <ThemedText className='text-2xl font-light'>STYLE</ThemedText>
+                        <AiModel data={StylingModel}/>
+                    </View>
+                )}
+            />
+        </ThemedView>
+
     )
 }
