@@ -1,14 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Tabs } from 'expo-router';
 import { House, Library, CircleUser } from 'lucide-react-native';
 import { useColorScheme } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import { useUser } from '@clerk/clerk-expo';
+import { UserDetailContext } from '@/context/UserDetailContext';
 
 export default function TabLayout() {
     const colorScheme = useColorScheme();
     const themeColors = colorScheme === 'dark' ? Colors.dark : Colors.light;
     const { user } = useUser();
+    //@ts-expect-error
+    const {userDetail, setUserDetail} = useContext(UserDetailContext)
 
     const API_KEY = process.env.EXPO_PUBLIC_BACKEND_API;
 
@@ -25,6 +28,7 @@ export default function TabLayout() {
             console.log('User data:', data);
 
             if (data.message !== 'No user found with this email') {
+                setUserDetail(data[0]);
                 return;
             }
 
@@ -39,7 +43,9 @@ export default function TabLayout() {
                         name: user?.fullName,
                     }),
                 });
-                console.log('User created:', response);
+                const data = await response.json();
+                console.log('User created:', data[0]);
+                setUserDetail(data[0]);
             } catch (error) {
                 console.error('Error creating user:', error);
             }
@@ -56,10 +62,12 @@ export default function TabLayout() {
                 tabBarStyle: {
                     paddingVertical: 10,
                     backgroundColor: themeColors.background,
+                    shadowColor: '#000000',
                 },
                 tabBarLabelStyle: {
                     marginVertical: 5,
                 },
+                
             }}
         >
             <Tabs.Screen
