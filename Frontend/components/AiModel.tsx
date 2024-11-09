@@ -1,19 +1,22 @@
 import { View, Text, FlatList, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
-import { AvatarModelInfo } from '@/constants/ModelInfo'
+import { ModelInfo } from '@/constants/ModelInfo';
+import { useRouter } from 'expo-router';
 
 interface AiModelProps {
-    data: AvatarModelInfo[];
+    data: ModelInfo[];
 }
 
-interface apicall{
-    api: string,
-    prompt: string
-}
 
 export default function AiModel({ data }: AiModelProps) {
-    const renderHeader = ({api, prompt}: apicall) => {
-        console.log(api, prompt)
+    const router = useRouter();
+
+    const handleonClick = (item: ModelInfo) => {
+        router.push({
+            pathname: '/promptpage',
+            //@ts-expect-error
+            params: item,
+        })
     }
 
     return (
@@ -23,7 +26,7 @@ export default function AiModel({ data }: AiModelProps) {
             horizontal={true}
             showsHorizontalScrollIndicator={false}
             renderItem={({ item, index }) => (
-                <TouchableOpacity className='mr-4' onPress={()=>renderHeader({ api: item.api, prompt: item.prompt })}>
+                <TouchableOpacity className='mr-4' onPress={()=>handleonClick(item)}>
                     <Image className='w-36 h-44 rounded-2xl' source={{uri: item.image}}/>
 
                     <View className='absolute w-36 h-44 inset-0 bg-black/20 rounded-2xl'/>

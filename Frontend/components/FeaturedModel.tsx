@@ -1,11 +1,18 @@
-import { View, Text, FlatList, Image, TouchableOpacity } from 'react-native'
+import { View, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 import ThemedText from './ui/ThemedText'
-import { TopBarItem } from '@/constants/ModelInfo'
+import { ModelInfo, TopBarItem } from '@/constants/ModelInfo'
+import { useRouter } from 'expo-router'
 
 export default function FeaturedModel() {
-    const apicall = async (api: string) => {
-        console.log(api)
+    const router = useRouter();
+
+    const handleonclick = (data: ModelInfo) => {
+        router.push({
+            pathname:'/promptpage',
+            //@ts-expect-error
+            params: data
+        })
     }
 
 
@@ -19,7 +26,7 @@ export default function FeaturedModel() {
             <View className='flex-row justify-between mt-2'>
                 {TopBarItem.map((item, index) => (
                     <TouchableOpacity
-                        onPress={()=>apicall(item.api)} key={index}
+                        onPress={()=>handleonclick(item)} key={index}
                         className='flex-1 items-center'
                     >
                         <View className='p-3 bg-slate-700 rounded-full'>

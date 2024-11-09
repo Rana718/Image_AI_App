@@ -11,13 +11,16 @@ export default function TabLayout() {
     const themeColors = colorScheme === 'dark' ? Colors.dark : Colors.light;
     const { user } = useUser();
     //@ts-expect-error
-    const {userDetail, setUserDetail} = useContext(UserDetailContext)
+    const { userDetail, setUserDetail } = useContext(UserDetailContext);
 
     const API_KEY = process.env.EXPO_PUBLIC_BACKEND_API;
 
     useEffect(() => {
         if (user) {
-            fetchUserData('gggk@outlok.com');
+            const email = user.primaryEmailAddress?.emailAddress;
+            if (email) {
+                fetchUserData(email);
+            }
         }
     }, [user]);
 
@@ -32,25 +35,22 @@ export default function TabLayout() {
                 return;
             }
 
-            try {
-                const response = await fetch(`${API_KEY}/user`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        name: user?.fullName,
-                    }),
-                });
-                const data = await response.json();
-                console.log('User created:', data[0]);
-                setUserDetail(data[0]);
-            } catch (error) {
-                console.error('Error creating user:', error);
-            }
+            const newUserResponse = await fetch(`${API_KEY}/user`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    name: user?.fullName,
+                }),
+            });
+
+            const newUserData = await newUserResponse.json();
+            console.log('User created:', newUserData[0]);
+            setUserDetail(newUserData[0]);
         } catch (error) {
-            console.error('Error fetching user data:', error);
+            console.error('Error fetching or creating user:', error);
         }
     };
 
@@ -67,7 +67,6 @@ export default function TabLayout() {
                 tabBarLabelStyle: {
                     marginVertical: 5,
                 },
-                
             }}
         >
             <Tabs.Screen
