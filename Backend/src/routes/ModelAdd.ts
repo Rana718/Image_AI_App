@@ -13,36 +13,6 @@ cloudinary.config({
 });
 
 
-modelAddRoute.post("/aimodel", async (c) => {
-    const { name, aiModelName, defaultPrompt, isFeatured, userImageUpload, style, avater, icon, banner } = await c.req.json();
-
-    console.log(name, aiModelName, defaultPrompt, isFeatured, userImageUpload, style, avater, icon, banner);
-
-    try{
-        const iconUploadRes = icon ? await cloudinary.uploader.upload(icon, { folder: "icon" }) : null;
-        const bannerUploadRes = banner ? await cloudinary.uploader.upload(banner, { folder: "banner" }) : null;
-
-        const newModel = await prisma.aiModelList.create({
-            data:{
-                name,
-                aiModelName,
-                defaultPrompt: defaultPrompt || null,
-                isFeatured,
-                userImageUpload,
-                style,
-                avater,
-                icon: iconUploadRes ? iconUploadRes.secure_url : null,
-                banner: bannerUploadRes ? bannerUploadRes.secure_url : null,
-            },
-        });
-        return c.json({ message: "Model added successfully", model: newModel}, 201);
-    }catch(err){
-        console.log(err);
-        return c.json({ message: "Error adding model" }, 500)
-    }
-
-})
-
 modelAddRoute.get("/aimodel", async (c) => {
     const model = c.req.query("model") === 'true';
     if (model === undefined) {

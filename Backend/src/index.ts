@@ -1,10 +1,9 @@
 import { Hono } from 'hono'
-import userRoutes from './routes/userRoutes'
 import { cors } from 'hono/cors';
-import modelAddRoute from './routes/ModelAdd'
+import mainRoute from './routes';
 
 const app = new Hono()
-const routes = [userRoutes, modelAddRoute]
+const routes = mainRoute
 
 app.use('*', cors({
   origin: '*',
@@ -16,8 +15,6 @@ app.get('/', (c) => {
   return c.text('Hello Hono!')
 })
 
-routes.forEach((route) => {
-  app.route('/api', route)
-})
+app.route('/api',routes)
 
 export default app
