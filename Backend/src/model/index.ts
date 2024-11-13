@@ -3,6 +3,10 @@ import { config } from "dotenv";
 //@ts-expect-error
 import FormData from 'form-data';
 import axios from "axios";
+//@ts-expect-error
+import fs from 'fs';
+//@ts-expect-error
+import path from 'path';
 
 config();
 
@@ -14,7 +18,7 @@ const rapid = process.env.RAPID_API_KEY;
 
 modelRoute.post("/texttoimage", async (c) => {
     const { text } = await c.req.json();
-
+    console.log(text);
     if (!text) {
         return c.json({ error: "Missing text or email" }, 400);
     }
@@ -45,44 +49,49 @@ modelRoute.post("/texttoimage", async (c) => {
 });
 
 
-
-
 modelRoute.post('/imgupbg', async (c) => {
-    const formData = await c.req.formData();
-    const imageFile = formData.get('image') as File;
-    const isremovebg = formData.get('isremovebg');
-    const email = formData.get('email');
+    const { imageBase64, isremovebg } = await c.req.json();
 
-    if (!imageFile || !email || !isremovebg) {
-        return c.json({ error: 'Image, email and isRemovebg are required' }, 400);
-    }
-
-    const app_url = isremovebg
+    const app_url = isremovebg === 'true'
         ? 'https://ai-background-remover.p.rapidapi.com/image/matte/v1'
         : 'https://ai-image-upscaler1.p.rapidapi.com/v1';
 
-    const buffer = await imageFile.arrayBuffer();
-    const data = new FormData();
-    data.append('image', Buffer.from(buffer), imageFile.name);
+    const buffer = Buffer.from(imageBase64, 'base64');
+    const tempDir = path.join('uploads');
+
+    // Ensure the 'uploads' directory exists
+    if (!fs.existsSync(tempDir)) {
+        fs.mkdirSync(tempDir, { recursive: true });
+    }
+
+    const tempFilePath = path.join(tempDir, 'temp-image.jpg');
+    fs.writeFileSync(tempFilePath, buffer);
+
+    const formData = new FormData();
+    formData.append('image', fs.createReadStream(tempFilePath));
 
     try {
         const response = await axios.post(
             app_url,
-            data,
+            formData,
             {
                 headers: {
-                    'x-rapidapi-key': rapid,
-                    'x-rapidapi-host': 'ai-image-upscaler1.p.rapidapi.com',
-                    ...data.getHeaders(),
+                    'x-rapidapi-key': process.env.RAPID_API_KEY,
+                    'x-rapidapi-host': isremovebg === 'true'
+                        ? 'ai-background-remover.p.rapidapi.com'
+                        : 'ai-image-upscaler1.p.rapidapi.com',
+                    ...formData.getHeaders(),
                 },
+                responseType: 'arraybuffer',
             }
         );
 
-        const base64Image = response.data.result_base64;
-        return c.json({ upscaledImage: base64Image });
+        return c.body(response.data, 200);
     } catch (error) {
         console.error('Error:', error);
-        return c.json({ error: 'Failed to upscale image' }, 500);
+        return c.json({ error: 'Failed to process image' }, 500);
+    } finally {
+        fs.unlinkSync(tempFilePath);
     }
 });
 
@@ -91,12 +100,9 @@ modelRoute.get('/mockup', async (c) => {
 })
 
 modelRoute.post('/avatar', async (c) => {
-    const formData = await c.req.formData();
-    // const imageFile = formData.get('image') as File;
-    // const email = formData.get('email');
-    const prompt = formData.get('prompt');
+    const { email, prompt, imageBase64} = await c.req.json();
 
-    return c.json({ message: 'Avatar API is under maintenance and your prompt is: ',prompt });
+    return c.json({ message: 'Avatar API is under maintenance and your prompt is: ', prompt });
 })
 
 export default modelRoute;
