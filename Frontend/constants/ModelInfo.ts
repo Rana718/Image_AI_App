@@ -14,19 +14,19 @@ const TopBarItem: ModelInfo[] = [
     {
         name: 'Text to Image',
         icon: icons.text_to_image,
-        api: 'imagetotext',
+        api: 'texttoimage',
         upload: false,
     }
     ,{
         name: 'Remove Bg',
         icon: icons.removebg,
-        api: 'removebg',
+        api: 'imgupbg',
         upload: true,
     },
     {
         name: 'Image Upscaling',
         icon: icons.imgup,
-        api: 'imgup',
+        api: 'imgupbg',
         upload: true,
     },
     {

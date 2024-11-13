@@ -3,22 +3,27 @@ import React from 'react'
 import ThemedText from './ui/ThemedText'
 import { Colors } from '@/constants/Colors';
 
-export default function TextInputBox() {
+interface TextInputBoxProps {
+    setPrompt: (prompt: string) => void;
+}
+
+export default function TextInputBox({setPrompt}: TextInputBoxProps) {
     const colorScheme = useColorScheme();
     const themeColors = colorScheme === 'dark' ? Colors.dark : Colors.light;
 
     return (
         <View>
-            <ThemedText className='text-sm mt-3 ml-1' colorKey='lightText'>
+            <ThemedText className='text-xl font-light mt-3' colorKey='lightText'>
                 Enter Your Prompt
             </ThemedText>
 
             <TextInput 
                 placeholder='Enter Your Prompt...'
-                numberOfLines={5}
+                numberOfLines={8}
                 multiline={true}
+                onChange={(e)=> setPrompt(e.nativeEvent.text)}
                 textAlignVertical='top'
-                className='p-4 rounded-2xl mt-4 border'
+                className='p-4 rounded-2xl mt-4 border text-lg mx-2'
                 style={{
                     backgroundColor: themeColors.lightbackground,
                     borderColor: themeColors.text,

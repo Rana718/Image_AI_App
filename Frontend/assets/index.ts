@@ -3,6 +3,7 @@ import imgup from './icons/image.png'
 import text_to_image from './icons/textimage.png'
 import MockUp from './icons/falling.png'
 import Coin from './icons/coin.png'
+import upload from './icons/upload_icon.png'
 
 
 
@@ -11,5 +12,6 @@ export {
     imgup,
     text_to_image,
     MockUp,
-    Coin
+    Coin,
+    upload
 }
