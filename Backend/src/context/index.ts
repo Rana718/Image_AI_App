@@ -24,7 +24,7 @@ const startTimeOut = (email: string) => {
     setTimeout(async () =>{
         if(imageTracking[email] && imageTracking[email].publicId) {
             const timeDiff = Date.now() - imageTracking[email].uploadedAt;
-            if(timeDiff > 300000){
+            if(timeDiff > 1800000){
                 try{
                     await cloudinary.uploader.destroy(imageTracking[email].publicId);
                     delete imageTracking[email];
@@ -33,7 +33,7 @@ const startTimeOut = (email: string) => {
                 }
             }
         }
-    }, 300000);
+    }, 1800000);
 }
 
 

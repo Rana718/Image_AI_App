@@ -4,8 +4,8 @@ import FormData from 'form-data';
 import axios from 'axios';
 import * as fs from 'fs';
 import * as path from 'path';
-import cloudinary from '../../cloudinaryConfig';
 import { addImageToTracking } from '../context';
+import { uploadToCloudinary } from '../util/cloudinaryUpload';
 
 config();
 const imageUpBgRoute = new Hono();
@@ -56,32 +56,15 @@ imageUpBgRoute.post('/imgupbg', async (c) => {
             imageData = Buffer.from(responseJson.result_base64, 'base64');
         }
 
-        const cloudinaryResponse = await new Promise((resolve, reject) => {
-            const uploadStream = cloudinary.uploader.upload_stream(
-                { resource_type: 'image' },
-                (error, result) => {
-                    if (error) return reject(error);
-                    resolve(result!);
-                }
-            );
-            uploadStream.end(imageData);
-        });
+        const cloudinaryResponse = await uploadToCloudinary(imageData);
 
-        console.log('Cloudinary response:', cloudinaryResponse);
-
-
-        
         addImageToTracking({
             email,
-            //@ts-expect-error
             publicId: cloudinaryResponse.public_id,
-            //@ts-expect-error
             url: cloudinaryResponse.secure_url,
         });
         
-        //@ts-expect-error
         console.log(cloudinaryResponse.secure_url)
-        //@ts-expect-error
         return c.body(cloudinaryResponse.secure_url, 200);
     } catch (error) {
         console.error('Error:', error);

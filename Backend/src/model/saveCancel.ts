@@ -1,8 +1,10 @@
 import { Hono } from "hono";
 import cloudinary from "../../cloudinaryConfig";
 import { getImageTracking } from "../context";
+import { PrismaClient } from "@prisma/client";
 
 const saveCancelRoute = new Hono();
+const prisma = new PrismaClient();
 
 
 saveCancelRoute.get('/save', async (c) => {
@@ -11,13 +13,21 @@ saveCancelRoute.get('/save', async (c) => {
 
     if (!email || !imageTracking[email]) {
         //@ts-expect-error
-    console.log(imageTracking[email], email);
+        console.log(imageTracking[email], email);
         return c.json({ message: 'No image found' }, 404);
     }
-
-    delete imageTracking[email];
-
-    return c.json({ message: 'image Saved Successfully' }, 200);
+    try{
+        const imageup = await prisma.userImage.create({
+            data: {
+                userEmail: email,
+                image: imageTracking[email].url,
+            }
+        });
+        delete imageTracking[email];
+        return c.json({ message: 'image Saved Successfully' }, 200);
+    }catch(error){
+        return c.json({ message: 'Error in saving image' }, 500);
+    }
 })
 
 saveCancelRoute.delete('/cancel', async (c) => {

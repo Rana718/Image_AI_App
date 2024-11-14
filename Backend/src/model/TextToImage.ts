@@ -3,6 +3,7 @@ import axios from "axios";
 import { config } from 'dotenv';
 import cloudinary from "../../cloudinaryConfig";
 import { addImageToTracking } from "../context";
+import { uploadToCloudinary } from "../util/cloudinaryUpload";
 
 config();
 
@@ -13,9 +14,9 @@ const textToImageRoute = new Hono();
 
 
 textToImageRoute.post("/texttoimage", async (c) => {
-    const { text } = await c.req.json();
+    const { text, email } = await c.req.json();
     console.log(text);
-    if (!text) {
+    if (!text || !email) {
         return c.json({ error: "Missing text or email" }, 400);
     }
 
@@ -30,17 +31,22 @@ textToImageRoute.post("/texttoimage", async (c) => {
         const contentType = response.headers['content-type'] || 'application/octet-stream';
 
         if (response.status === 200 && contentType.startsWith("image/")) {
-            return c.body(response.data, 200, {
-                "Content-Type": contentType,
-                "Content-Disposition": `attachment; filename="generated_image.png"`,
-            });
-        }
-        const errorResponse = JSON.parse(Buffer.from(response.data).toString());
-        return c.json({ error: "Non-image response from API", details: errorResponse }, 500);
+            const imageData = Buffer.from(response.data);
+            const cloudinaryResponse = await uploadToCloudinary(imageData);
 
+            addImageToTracking({
+                email: email,
+                publicId: cloudinaryResponse.public_id,
+                url: cloudinaryResponse.secure_url,
+            })
+            console.log(cloudinaryResponse.secure_url);
+            return c.body(cloudinaryResponse.secure_url, 200)
+        }
+        else{
+            return c.json({ error: "Error processing image" }, 500);
+        }
     } catch (error) {
-        console.error("Error processing image:", error);
-        return c.json({ error: "Error processing image" }, 500);
+        return c.json({ error: "Error processing image maybe due to rate limit" }, 500);
     }
 });
 
