@@ -10,6 +10,7 @@ import ThemedScrollView from '@/components/ui/ThemedScrollView';
 import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
 import { UserDetailContext } from '@/context/UserDetailContext';
+import Loading from '@/components/ui/Loading';
 
 export default function PromptPage() {
     const params = useLocalSearchParams();
@@ -24,6 +25,7 @@ export default function PromptPage() {
     const isEnable = params?.prompt?.length > 0 ? true : false;
     const api_key = params.api
     const API_KEY = process.env.EXPO_PUBLIC_BACKEND_API;
+    const [isLoading, setIsLoading] = useState(false);
     //@ts-expect-error
     const { userDetail, setUserDetail } = useContext(UserDetailContext);
 
@@ -50,6 +52,7 @@ export default function PromptPage() {
 
     const handleGenerate = async () => {
         if (params.upload === 'true') {
+            setIsLoading(true)
             const prompt = params.prompt?.length > 0 ? params.prompt : userPrompt;
             const isremovebg = params.name === 'Remove Bg' ? 'true' : 'false';
             console.log(api_key)
@@ -69,36 +72,48 @@ export default function PromptPage() {
                     responseType: 'json',
                     
                 })
+                setIsLoading(false)
                 router.push({
                     pathname: '/view',
                     params:{
-                        response: res.data,
+                        image: res.data,
                         email: userDetail.userEmail
                     }
                 })
-                console.log(res.data);
             }catch (error: any) {
+                setIsLoading(false)
                 console.error("Error generating image:", error.response?.data || error.message);
                 return null;
             }
         } else {
+            setIsLoading(true)
             try {
                 console.log('Sending request with prompt:', userPrompt);
                 const res = await axios.post(`${API_KEY}/ai/${api_key}`, {
                     text: userPrompt,
+                    email: userDetail.userEmail
                 }, {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    responseType: 'blob',
+                    responseType: 'json',
                 });
-                if (res.status === 200 && res.headers["content-type"].startsWith("image/")) {
-                    console.log(res.data);
+                if (res.status === 200 ) {
+                    setIsLoading(false)
+                    router.push({
+                        pathname: '/view',
+                        params:{
+                            image: res.data,
+                            email: userDetail.userEmail
+                        }
+                    })
                 } else {
+                    setIsLoading(false)
                     console.log("Error:", res);
                     
                 }
             }catch (error: any) {
+                setIsLoading(false)
                 console.error("Error generating image:", error.response?.data || error.message);
                 return null;
             }
@@ -133,7 +148,11 @@ export default function PromptPage() {
                     onPress={() => handleGenerate()}
                     className='w-[80%] bg-tint py-2 rounded-lg mt-5'
                 >
-                    <Text className='text-white font-bold text-3xl text-center'>Generate</Text>
+                    {isLoading ?(
+                        <Loading size={"large"}/>
+                    ):(
+                        <Text className='text-white font-bold text-3xl text-center'>Generate</Text>
+                    )}
                 </TouchableOpacity>
             </View>
 
