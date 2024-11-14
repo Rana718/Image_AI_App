@@ -1,6 +1,6 @@
 import { View, Text, useColorScheme, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { useLocalSearchParams, useNavigation } from 'expo-router'
+import React, { useContext, useEffect, useState } from 'react'
+import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import { ModelInfo } from '@/constants/ModelInfo';
 import { Colors } from '@/constants/Colors';
 import ThemedText from '@/components/ui/ThemedText';
@@ -9,10 +9,12 @@ import ImageUpload from '@/components/ImageUpload';
 import ThemedScrollView from '@/components/ui/ThemedScrollView';
 import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
+import { UserDetailContext } from '@/context/UserDetailContext';
 
 export default function PromptPage() {
     const params = useLocalSearchParams();
     const navigation = useNavigation();
+    const router = useRouter();
     const [userPrompt, setUserPrompt] = useState('');
     const [modelInfo, setModelInfo] = useState<ModelInfo | null>(null);
     const colorScheme = useColorScheme();
@@ -22,6 +24,8 @@ export default function PromptPage() {
     const isEnable = params?.prompt?.length > 0 ? true : false;
     const api_key = params.api
     const API_KEY = process.env.EXPO_PUBLIC_BACKEND_API;
+    //@ts-expect-error
+    const { userDetail, setUserDetail } = useContext(UserDetailContext);
 
     useEffect(() => {
         const parsedParams = {
@@ -41,12 +45,11 @@ export default function PromptPage() {
             headerTintColor: themeColors.text,
         });
 
-
     }, [themeColors])
+
 
     const handleGenerate = async () => {
         if (params.upload === 'true') {
-            const email = 'google78@gmail.com'
             const prompt = params.prompt?.length > 0 ? params.prompt : userPrompt;
             const isremovebg = params.name === 'Remove Bg' ? 'true' : 'false';
             console.log(api_key)
@@ -57,14 +60,21 @@ export default function PromptPage() {
                 const res = await axios.post(`${API_KEY}/ai/${api_key}`, {
                     imageBase64: imageBase64 ,
                     isremovebg: isremovebg,
-                    email: email,
+                    email: userDetail.userEmail,
                     prompt: prompt
                 },{
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    responseType: 'blob',
+                    responseType: 'json',
                     
+                })
+                router.push({
+                    pathname: '/view',
+                    params:{
+                        response: res.data,
+                        email: userDetail.userEmail
+                    }
                 })
                 console.log(res.data);
             }catch (error: any) {

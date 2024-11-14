@@ -1,7 +1,6 @@
-import { View, Text, ScrollView, FlatList } from 'react-native'
+import { View, FlatList } from 'react-native'
 import React from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import ThemedScrollView from '@/components/ui/ThemedScrollView';
 import Header from '@/components/Header';
 import Banner from '@/components/Banner';
 import FeaturedModel from '@/components/FeaturedModel';
@@ -18,6 +17,7 @@ export default function index() {
             <FlatList
                 data={[1]}
                 nestedScrollEnabled
+                showsVerticalScrollIndicator={false}
                 renderItem={({ item }) => (
                     <View>
                         <Header />
