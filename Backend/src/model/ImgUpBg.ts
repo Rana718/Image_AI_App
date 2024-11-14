@@ -1,6 +1,5 @@
 import { Hono } from 'hono';
 import { config } from 'dotenv';
-//@ts-expect-error
 import FormData from 'form-data';
 import axios from 'axios';
 import * as fs from 'fs';
@@ -8,7 +7,7 @@ import * as path from 'path';
 import cloudinary from '../../cloudinaryConfig';
 import { addImageToTracking } from '../context';
 
-
+config();
 const imageUpBgRoute = new Hono();
 const rapid = process.env.RAPID_API_KEY;
 
@@ -21,6 +20,8 @@ imageUpBgRoute.post('/imgupbg', async (c) => {
     const rapiapi_host = isremovebg === 'true' ? 'ai-background-remover.p.rapidapi.com' : 'ai-image-upscaler1.p.rapidapi.com';
     const buffer = Buffer.from(imageBase64, 'base64');
     const tempDir = path.join('uploads');
+
+    console.log('Email:', isremovebg, 'app_url:', app_url);
 
     if (!fs.existsSync(tempDir)) {
         fs.mkdirSync(tempDir, { recursive: true });
@@ -46,6 +47,14 @@ imageUpBgRoute.post('/imgupbg', async (c) => {
                 responseType: 'arraybuffer',
             }
         );
+        
+        let imageData;
+        if (isremovebg === 'true') {
+            imageData = response.data;
+        }else{
+            const responseJson = JSON.parse(response.data.toString());
+            imageData = Buffer.from(responseJson.result_base64, 'base64');
+        }
 
         const cloudinaryResponse = await new Promise((resolve, reject) => {
             const uploadStream = cloudinary.uploader.upload_stream(
@@ -55,8 +64,11 @@ imageUpBgRoute.post('/imgupbg', async (c) => {
                     resolve(result!);
                 }
             );
-            uploadStream.end(response.data);
+            uploadStream.end(imageData);
         });
+
+        console.log('Cloudinary response:', cloudinaryResponse);
+
 
         
         addImageToTracking({
