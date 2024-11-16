@@ -1,15 +1,16 @@
-import { View, useColorScheme, Image, ToastAndroid } from 'react-native';
+import { View, useColorScheme, TouchableOpacity, Text, Image, ToastAndroid, Share } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { router, useLocalSearchParams, useNavigation } from 'expo-router';
+import { useRouter, useLocalSearchParams, useNavigation } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import ThemedView from '@/components/ui/ThemedView';
-import ThemedText from '@/components/ui/ThemedText';
 import CustomButton from '@/components/ui/CustomButton';
 import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system';
+import ThemedText from '@/components/ui/ThemedText';
 
 export default function ViewPage() {
     const params = useLocalSearchParams();
+    const router = useRouter();
     const colorScheme = useColorScheme();
     const navigation = useNavigation();
     const themeColors = colorScheme === 'dark' ? Colors.dark : Colors.light;
@@ -32,28 +33,36 @@ export default function ViewPage() {
     const handleSave = async () => {
         setLoading(true);
         const res = await fetch(`${API_KEY}/ai/save?email=${params.email}`)
-        if(res.ok){
+        if (res.ok) {
             setLoading(false);
             setSaved(true);
             ToastAndroid.show("Image Saved Successfully", ToastAndroid.LONG);
-        }else{
+        } else {
             console.log("error");
             ToastAndroid.show("Image have expired", ToastAndroid.LONG);
             setLoading(false);
         }
     }
-    const ReGenrate = async()=>{
+    const ReGenrate = async () => {
         router.back();
-        await fetch(`${API_KEY}/ai/cancel?email=${params.email}`,{
+        await fetch(`${API_KEY}/ai/cancel?email=${params.email}`, {
             method: 'DELETE',
-        });    
+        });
+    }
+    const Delete = async () => {
+        router.back();
+        const res = await fetch(`${API_KEY}/images?image=${params.image}`, {
+            method: 'DELETE',
+        });
+        console.log(res);
+        router.back();
     }
 
-    const downloadImage = async() =>{
-        try{
-            if(!permission?.granted){
+    const downloadImage = async () => {
+        try {
+            if (!permission?.granted) {
                 const permissionResp = await requestPermission();
-                if(!permissionResp.granted){
+                if (!permissionResp.granted) {
                     ToastAndroid.show("Permission Denied", ToastAndroid.LONG);
                     return;
                 }
@@ -64,21 +73,32 @@ export default function ViewPage() {
                 return;
             }
 
-            const fileuri = FileSystem.documentDirectory+Date.now()+"_image.png";
-            const {uri} = await FileSystem.downloadAsync(params.image as string, fileuri);
+            const fileuri = FileSystem.documentDirectory + Date.now() + "_image.png";
+            const { uri } = await FileSystem.downloadAsync(params.image as string, fileuri);
 
             const asset = await MediaLibrary.createAssetAsync(uri);
-            if(asset){
+            if (asset) {
                 ToastAndroid.show("Image Saved Successfully", ToastAndroid.LONG);
-            }else{
+            } else {
                 ToastAndroid.show("Image not Saved", ToastAndroid.LONG);
             }
-        }catch(err){
+        } catch (err) {
             console.log(err);
             ToastAndroid.show("Error Occured", ToastAndroid.LONG);
         }
     }
+    const handleShare = async () => {
+        try {
+            await Share.share({
+                message: `${params.image}`,
+            });
+        } catch (error) {
+            console.log(error);
+            ToastAndroid.show("Error Occurred While Sharing", ToastAndroid.LONG);
+        }
+    };
     
+
 
     return (
         <ThemedView className='flex-1 items-center px-5 pt-8' backgroundColorKey='primary'>
@@ -90,10 +110,10 @@ export default function ViewPage() {
                 />
             </View>
 
-            <View className='flex-1 mt-5'>
-                {!issaved ? (
+            <View className='flex-1 mt-5 w-full items-center'>
+                {!issaved && params.isHome !== 'true' ? (
                     <>
-                        <View className=''>
+                        <View className='w-full'>
                             <ThemedText colorKey='text' className='mb-2 font-bold text-xl'>Note: </ThemedText>
                             <ThemedText colorKey='lightText' className='text-sm font-light'>
                                 The generated image is available for 10 minutes. Press Save to store it and deduct 5 coins.
@@ -102,38 +122,53 @@ export default function ViewPage() {
                             </ThemedText>
                         </View>
 
-                        <View className='flex-row justify-between w-full mt-5'>
-                            <CustomButton
-                                className='rounded-xl py-3 px-5 w-[45%]'
-                                text='Regenerate'
+                        <View className='w-full mt-5 flex-col items-center gap-4'>
+                            <TouchableOpacity
+                                className='rounded-xl py-3 w-3/4 bg-[#FF5733] items-center'
                                 onPress={() => ReGenrate()}
-                                color="#FF5733"
-                            />
-                            <CustomButton
-                                className='rounded-xl py-3 px-5 w-[45%]'
-                                text='Save'
+                            >
+                                <Text className="font-bold text-white text-xl">
+                                    Regenerate
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                className='rounded-xl py-3 w-3/4 bg-[#FFC300] items-center'
                                 onPress={() => handleSave()}
-                                color="#FFC300"
-                                isLoading={isLoading}
-                                loadingColor='#ecedee'
-                            />
+                                disabled={isLoading}
+                            >
+                                <Text className="font-bold text-white text-xl">
+                                    {isLoading ? 'Saving...' : 'Save'}
+                                </Text>
+                            </TouchableOpacity>
                         </View>
                     </>
                 ) : (
                     <>
-                        <View className='flex-row justify-between w-full'>
-                            <CustomButton
-                                className='rounded-xl py-3 px-5 w-[45%]'
-                                text="Download"
+                        <View className='flex-col items-center mt-8 gap-4 w-full'>
+                            <TouchableOpacity
+                                className='rounded-xl py-3 w-3/4 bg-[#4CAF50] items-center'
                                 onPress={() => downloadImage()}
-                                color="#4CAF50"
-                            />
-                            <CustomButton
-                                className='rounded-xl py-3 px-5 w-[45%]'
-                                text="Share"
-                                onPress={() => console.log("Share")}
-                                color="#2196F3"
-                            />
+                            >
+                                <Text className="font-bold text-white text-xl">
+                                    Download
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                className='rounded-xl py-3 w-3/4 bg-[#FF0000] items-center'
+                                onPress={() => Delete()}
+                            >
+                                <Text className="font-bold text-white text-xl">
+                                    Delete
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                className='rounded-xl py-3 w-3/4 bg-[#2196F3] items-center'
+                                onPress={() => handleShare()}
+                            >
+                                <Text className="font-bold text-white text-xl">
+                                    Share
+                                </Text>
+                            </TouchableOpacity>
                         </View>
                     </>
                 )}
