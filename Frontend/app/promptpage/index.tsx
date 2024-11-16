@@ -149,7 +149,7 @@ export default function PromptPage() {
                     className='w-[80%] bg-tint py-2 rounded-lg mt-5'
                 >
                     {isLoading ?(
-                        <Loading size={"large"}/>
+                        <Loading size={"large"} color={"white"}/>
                     ):(
                         <Text className='text-white font-bold text-3xl text-center'>Generate</Text>
                     )}
