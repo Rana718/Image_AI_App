@@ -22,13 +22,12 @@ export default function TabLayout() {
                 fetchUserData(email);
             }
         }
-    }, [user]);
+    }, [user, userDetail]);
 
     const fetchUserData = async (email: string) => {
         try {
             const response = await fetch(`${API_KEY}/user?email=${email}`);
             const data = await response.json();
-            console.log('User data:', data);
 
             if (data.message !== 'No user found with this email') {
                 setUserDetail(data[0]);

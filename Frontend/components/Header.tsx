@@ -20,7 +20,7 @@ export default function Header() {
                 <View className=' flex flex-row rounded-full gap-1 px-2 items-center bg-yellow-400 border border-yellow-950'>
                     <Image className='w-8 h-8' source={Coin}/>
 
-                    <Text className='text-white text-xl font-bold'>{userDetail?.credits}</Text>
+                    <Text className='text-white text-xl font-bold pr-1'>{userDetail?.credits}</Text>
                 </View>
 
                 <Image className='w-10 h-10 rounded-full' source={{uri: user?.imageUrl}}/>
