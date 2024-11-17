@@ -5,6 +5,7 @@ import * as SecureStore from 'expo-secure-store'
 import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo'
 import { useState } from "react";
 import { UserDetailContext } from "@/context/UserDetailContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 
 SplashScreen.preventAutoHideAsync();
@@ -41,15 +42,17 @@ export default function RootLayout() {
   const [userDetail, setUserDetail] = useState();
 
   return (
-    <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
-      <ClerkLoaded>
-        <UserDetailContext.Provider value={{ userDetail, setUserDetail }}>
-          <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          </Stack>
-        </UserDetailContext.Provider>
-      </ClerkLoaded>
-    </ClerkProvider>
+    <ThemeProvider>
+      <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
+        <ClerkLoaded>
+          <UserDetailContext.Provider value={{ userDetail, setUserDetail }}>
+            <Stack>
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            </Stack>
+          </UserDetailContext.Provider>
+        </ClerkLoaded>
+      </ClerkProvider>
+    </ThemeProvider>
   );
 }

@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, ViewProps, useColorScheme } from 'react-native';
+import { View, ViewProps } from 'react-native';
 import { Colors } from '@/constants/Colors';
+import { useTheme } from '@/context/ThemeContext';
 
 interface ThemedViewProps extends ViewProps {
     children: React.ReactNode;
@@ -8,8 +9,7 @@ interface ThemedViewProps extends ViewProps {
 }
 
 const ThemedView: React.FC<ThemedViewProps> = ({ children, backgroundColorKey = 'background', style, ...props }) => {
-    const colorScheme = useColorScheme();
-    const themeColors = colorScheme === "dark" ? Colors.dark : Colors.light;
+    const { themeColors } = useTheme();
 
     return (
         <View style={[{ backgroundColor: themeColors[backgroundColorKey] }, style]} {...props}>

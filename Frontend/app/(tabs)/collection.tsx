@@ -50,6 +50,7 @@ export default function Collection() {
     const renderItem: ListRenderItem<ImageItem> = ({ item }) => (
         <TouchableOpacity className='w-1/2 p-2' onPress={()=> handelOnPress(item)}>
             <Image
+                className='border border-black'
                 source={{ uri: item.image }}
                 style={{ width: '100%', height: 150, borderRadius: 10 }}
                 resizeMode='cover'
@@ -67,7 +68,7 @@ export default function Collection() {
 
     return (
         <ThemedView className='px-5 flex-1' style={{ paddingTop: safeTop }} backgroundColorKey='background'>
-            <ThemedText className='text-2xl font-bold mb-4'>Your Saved Images</ThemedText>
+            <ThemedText className='text-3xl font-bold mt-5 mb-3 text-center'>Your Saved Images</ThemedText>
             <FlatList
                 data={visibleData}
                 keyExtractor={(item) => item.id.toString()}

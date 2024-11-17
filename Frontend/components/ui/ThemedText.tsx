@@ -1,6 +1,7 @@
 import React from 'react';
-import { Text, TextProps, useColorScheme } from 'react-native';
+import { Text, TextProps } from 'react-native';
 import { Colors } from '@/constants/Colors';
+import { useTheme } from '@/context/ThemeContext';
 
 interface ThemedTextProps extends TextProps {
     children: React.ReactNode;
@@ -8,8 +9,7 @@ interface ThemedTextProps extends TextProps {
 }
 
 const ThemedText: React.FC<ThemedTextProps> = ({ style, children, colorKey = 'text', ...props }) => {
-    const colorScheme = useColorScheme();
-    const themeColors = colorScheme === "dark" ? Colors.dark : Colors.light;
+    const { themeColors } = useTheme();
 
     return (
         <Text style={[{ color: themeColors[colorKey] }, style]} {...props}>

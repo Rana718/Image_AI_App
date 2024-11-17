@@ -1,6 +1,7 @@
 import React from 'react';
-import { ScrollView, ScrollViewProps, useColorScheme } from 'react-native';
+import { ScrollView, ScrollViewProps } from 'react-native';
 import { Colors } from '@/constants/Colors';
+import { useTheme } from '@/context/ThemeContext';
 
 interface ThemedScrollViewProps extends ScrollViewProps {
     children: React.ReactNode;
@@ -8,8 +9,7 @@ interface ThemedScrollViewProps extends ScrollViewProps {
 }
 
 const ThemedScrollView: React.FC<ThemedScrollViewProps> = ({ children, backgroundColorKey = 'primary', style, ...props }) => {
-    const colorScheme = useColorScheme();
-    const themeColors = colorScheme === "dark" ? Colors.dark : Colors.light;
+    const { themeColors } = useTheme();
 
     return (
         <ScrollView style={[{ backgroundColor: themeColors[backgroundColorKey] }, style]} {...props}>

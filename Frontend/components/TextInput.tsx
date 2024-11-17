@@ -1,15 +1,14 @@
-import { View, Text, useColorScheme, TextInput } from 'react-native'
+import { View, TextInput } from 'react-native'
 import React from 'react'
 import ThemedText from './ui/ThemedText'
-import { Colors } from '@/constants/Colors';
+import { useTheme } from '@/context/ThemeContext';
 
 interface TextInputBoxProps {
     setPrompt: (prompt: string) => void;
 }
 
 export default function TextInputBox({setPrompt}: TextInputBoxProps) {
-    const colorScheme = useColorScheme();
-    const themeColors = colorScheme === 'dark' ? Colors.dark : Colors.light;
+    const { themeColors } = useTheme();
 
     return (
         <View>

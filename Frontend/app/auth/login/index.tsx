@@ -38,7 +38,7 @@ export default function Login() {
         async (startOAuthFlow) => {
             try {
                 const { createdSessionId, setActive } = await startOAuthFlow({
-                    redirectUrl: Linking.createURL('/(tabs)', { scheme: 'myapp' }),
+                    redirectUrl: Linking.createURL('/home', { scheme: 'myapp' }),
                 });
 
                 if (createdSessionId) {

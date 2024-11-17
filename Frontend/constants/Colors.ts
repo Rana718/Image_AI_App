@@ -6,7 +6,7 @@ export const Colors = {
     primary: '#f9fafb',
     text: '#11181C',
     lightText: '#6B7280',
-    background: '#fff',
+    background: '#f8e1e1',
     lightbackground: '#dbdde0',
     tint: tintColorLight,
     icon: '#687076',

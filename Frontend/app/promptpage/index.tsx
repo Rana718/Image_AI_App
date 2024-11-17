@@ -11,6 +11,7 @@ import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
 import { UserDetailContext } from '@/context/UserDetailContext';
 import Loading from '@/components/ui/Loading';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function PromptPage() {
     const params = useLocalSearchParams();
@@ -18,14 +19,13 @@ export default function PromptPage() {
     const router = useRouter();
     const [userPrompt, setUserPrompt] = useState('');
     const [modelInfo, setModelInfo] = useState<ModelInfo | null>(null);
-    const colorScheme = useColorScheme();
     const [photoURL, setPhotoURL] = useState('');
     const [isPrompt, setIsPrompt] = useState(false);
-    const themeColors = colorScheme === 'dark' ? Colors.dark : Colors.light;
     const isEnable = params?.prompt?.length > 0 ? true : false;
     const api_key = params.api
     const API_KEY = process.env.EXPO_PUBLIC_BACKEND_API;
     const [isLoading, setIsLoading] = useState(false);
+    const { themeColors } = useTheme();
     //@ts-expect-error
     const { userDetail, setUserDetail } = useContext(UserDetailContext);
 

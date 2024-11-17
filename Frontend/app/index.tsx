@@ -9,7 +9,7 @@ export default function Home() {
 
     return (
         <View>
-            {!user? <Redirect href={'/auth'}/>: <Redirect href={'/(tabs)'}/>}
+            {!user? <Redirect href={'/auth'}/>: <Redirect href={'/home'}/>}
         </View>
     )
 }

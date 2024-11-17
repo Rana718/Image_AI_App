@@ -1,19 +1,17 @@
-import { View, useColorScheme, TouchableOpacity, Text, Image, ToastAndroid, Share } from 'react-native';
+import { View, TouchableOpacity, Text, Image, ToastAndroid, Share } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useRouter, useLocalSearchParams, useNavigation } from 'expo-router';
-import { Colors } from '@/constants/Colors';
 import ThemedView from '@/components/ui/ThemedView';
-import CustomButton from '@/components/ui/CustomButton';
 import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system';
 import ThemedText from '@/components/ui/ThemedText';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function ViewPage() {
     const params = useLocalSearchParams();
     const router = useRouter();
-    const colorScheme = useColorScheme();
+    const { themeColors } = useTheme();
     const navigation = useNavigation();
-    const themeColors = colorScheme === 'dark' ? Colors.dark : Colors.light;
     const [issaved, setSaved] = useState(false);
     const API_KEY = process.env.EXPO_PUBLIC_BACKEND_API;
     const [isLoading, setLoading] = useState(false);
@@ -104,7 +102,7 @@ export default function ViewPage() {
         <ThemedView className='flex-1 items-center px-5 pt-8' backgroundColorKey='primary'>
             <View className='w-full h-[380px]'>
                 <Image
-                    className='w-full h-[380px] rounded-xl'
+                    className='w-full h-[380px] rounded-xl border border-black'
                     source={{ uri: params.image as string }}
                     resizeMode='cover'
                 />
