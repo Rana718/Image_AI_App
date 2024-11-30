@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "expo-file-system": "^18.0.3",
-    "expo-media-library": "^17.0.2"
-  }
-}

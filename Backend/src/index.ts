@@ -6,11 +6,10 @@ const app = new Hono()
 const routes = mainRoute
 
 app.use('*', async (c, next) => {
-  const req = c.req;
-  if(req instanceof Request){
+  if(c.req instanceof Request){
     await next()
   }else{
-    c.text('Not a valid request')
+    return c.text('Not a valid request', 400)
   }
 })
 
