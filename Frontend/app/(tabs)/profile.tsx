@@ -1,20 +1,19 @@
-import { View, Text, ToastAndroid, useColorScheme, TouchableOpacity } from 'react-native';
+import { View, Text, ToastAndroid, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Stack, useRouter } from 'expo-router';
-import ThemedView from '@/components/ui/ThemedView';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ThemedText from '@/components/ui/ThemedText';
 import ThemedScrollView from '@/components/ui/ThemedScrollView';
-import { Colors } from '@/constants/Colors';
 import { MaterialIcons } from "@expo/vector-icons";
 import CustomSwitch from '@/components/ui/CustomSwitch';
 import { useTheme } from '@/context/ThemeContext';
+//@ts-expect-error
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Profile() {
     const [isEnabled, setIsEnabled] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
-    const { top: safeTop } = useSafeAreaInsets();
     const { theme, themeColors, toggleTheme } = useTheme();
 
     useEffect(() => {

@@ -2,7 +2,8 @@
   "name": "Backend",
   "scripts": {
     "dev": "bun run --hot src/index.ts",
-    "build": "npx prisma generate && bun build src/index.ts"
+    "build": "prisma generate && bun build src/index.ts",
+    "vercel-build": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^5.21.1",
