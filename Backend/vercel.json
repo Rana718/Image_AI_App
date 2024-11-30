@@ -3,13 +3,23 @@
     "builds": [
         {
             "src": "src/index.ts",
-            "use": "@vercel/node"
+            "use": "@vercel/node",
+            "config": {
+                "includeFiles": [
+                    "prisma/**",
+                    "node_modules/.prisma/**",
+                    "package.json"
+                ]
+            }
         }
     ],
-    "routes":[
+    "routes": [
         {
             "src": "/(.*)",
             "dest": "src/index.ts"
         }
-    ]
+    ],
+    "installCommand": "bun install",
+    "buildCommand": "bun run build",
+    "outputDirectory": "dist"
 }
