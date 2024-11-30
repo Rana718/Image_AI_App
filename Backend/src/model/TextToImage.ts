@@ -1,7 +1,6 @@
 import { Hono } from "hono";
 import axios from "axios";
 import { config } from 'dotenv';
-import cloudinary from "../../cloudinaryConfig";
 import { addImageToTracking } from "../context";
 import { uploadToCloudinary } from "../util/cloudinaryUpload";
 
