@@ -20,6 +20,6 @@
         }
     ],
     "installCommand": "bun install",
-    "buildCommand": "bun run build",
+    "buildCommand": "bun run build && npx prisma generate",
     "outputDirectory": "dist"
 }
