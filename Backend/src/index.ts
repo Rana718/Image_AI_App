@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import mainRoute from './routes'
+import { handle } from '@hono/node-server/vercel'
 
 const app = new Hono()
 const routes = mainRoute
@@ -26,4 +27,4 @@ app.get('/', (c) => {
 
 app.route('/api', routes)
 
-export default () => app
+export default handle(app)
