@@ -6,10 +6,11 @@ const app = new Hono()
 const routes = mainRoute
 
 app.use('*', async (c, next) => {
-  if(c.req instanceof Request){
+  try {
     await next()
-  }else{
-    return c.text('Not a valid request', 400)
+  } catch (error) {
+    console.error('Error:', error)
+    return c.json({ error: 'Internal Server Error' }, 500)
   }
 })
 
