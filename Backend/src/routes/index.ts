@@ -5,7 +5,7 @@ import userImageRoute from "./userImage";
 
 const mainRoute = new Hono();
 
-mainRoute.route('/', userRoutes)
+mainRoute.route('/info', userRoutes)
 
 mainRoute.route('/ai', modelRoute)
 

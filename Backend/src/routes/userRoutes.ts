@@ -5,10 +5,6 @@ const userRoutes = new Hono();
 const prisma = new PrismaClient();
 
 
-userRoutes.get("/", async (c) => {
-    return c.json("Hello World");
-})
-
 userRoutes.get("/user", async (c) => {
     const email = c.req.query("email");
     if (!email) {
