@@ -5,6 +5,15 @@ import mainRoute from './routes';
 const app = new Hono()
 const routes = mainRoute
 
+app.use('*', async (c, next) => {
+  const req = c.req;
+  if(req instanceof Request){
+    await next()
+  }else{
+    c.text('Not a valid request')
+  }
+})
+
 app.use('*', cors({
   origin: '*',
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
