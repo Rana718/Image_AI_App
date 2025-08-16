@@ -1,29 +1,35 @@
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+const tintColorLight = '#7C3AED';
+const tintColorDark = '#8B5CF6';
 
 export const Colors = {
   light: {
-    primary: '#f9fafb',
-    text: '#11181C',
+    primary: '#FFFFFF',
+    text: '#1F2937',
     lightText: '#6B7280',
-    background: '#f8e1e1',
-    lightbackground: '#dbdde0',
+    background: '#F9FAFB',
+    lightbackground: '#F3F4F6',
     tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
+    icon: '#4B5563',
+    tabIconDefault: '#9CA3AF',
     tabIconSelected: tintColorLight,
-    testing: '#b94516',
+    accent: '#7C3AED',
+    accentLight: '#DDD6FE',
+    cardBg: '#FFFFFF',
+    border: '#E5E7EB',
   },
   dark: {
-    primary: '#262626',
-    text: '#ECEDEE',
-    lightText: '#9BA1A6',
-    background: '#151718',
-    lightbackground: '#424242',
+    primary: '#111827',
+    text: '#F9FAFB',
+    lightText: '#D1D5DB',
+    background: '#030712',
+    lightbackground: '#1F2937',
     tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
+    icon: '#D1D5DB',
+    tabIconDefault: '#6B7280',
     tabIconSelected: tintColorDark,
-    testing: '#3fb916',
+    accent: '#8B5CF6',
+    accentLight: '#4C1D95',
+    cardBg: '#1F2937',
+    border: '#374151',
   },
 };

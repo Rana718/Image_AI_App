@@ -26,7 +26,7 @@ export default function TabLayout() {
 
     const fetchUserData = async (email: string) => {
         try {
-            const response = await fetch(`${API_KEY}/user?email=${email}`);
+            const response = await fetch(`${API_KEY}/info/user?email=${email}`);
             const data = await response.json();
 
             if (data.message !== 'No user found with this email') {
@@ -34,7 +34,7 @@ export default function TabLayout() {
                 return;
             }
 
-            const newUserResponse = await fetch(`${API_KEY}/user`, {
+            const newUserResponse = await fetch(`${API_KEY}/info/user`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
